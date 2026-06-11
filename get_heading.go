@@ -14,4 +14,10 @@ func getHeadingFromHTML(html string) string {
 	}
 	out = strings.Split(out[1], "</h1>")
 	return out[0]
+
+	doc := strings.NewReader(html)
+
+	if doc.Find("<h1>") {
+
+	}
 }
