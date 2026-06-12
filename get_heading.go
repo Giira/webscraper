@@ -1,6 +1,11 @@
 package main
 
-import "strings"
+import (
+	"log"
+	"strings"
+
+	"github.com/PuerkitoBio/goquery"
+)
 
 func getHeadingFromHTML(html string) string {
 	var out []string
@@ -13,10 +18,12 @@ func getHeadingFromHTML(html string) string {
 		out = strings.Split(out[1], "</h2>")
 	}
 	out = strings.Split(out[1], "</h1>")
-	return out[0]
 
-	doc := strings.NewReader(html)
-
+	reader := strings.NewReader(html)
+	doc, err := goquery.NewDocumentFromReader(reader)
+	if err != nil {
+		log.Fatal("failed to prepare for goquery search: %v", err)
+	}
 	if doc.Find("<h1>") {
 
 	}
