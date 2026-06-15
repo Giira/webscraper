@@ -28,3 +28,15 @@ func getHeadingFromHTML(html string) string {
 
 	return ""
 }
+
+func getFirstParagraphFromHTML(html string) string {
+	reader := strings.NewReader(html)
+	doc, err := goquery.NewDocumentFromReader(reader)
+	if err != nil {
+		log.Fatalf("failed to prepare for goquery search: %v", err)
+	}
+
+	selection := doc.Find("<p>").First()
+	paragraph := selection.Text()
+	return paragraph
+}
