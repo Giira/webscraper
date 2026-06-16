@@ -13,6 +13,11 @@ func TestGetHeading(t *testing.T) {
 			inputHTML: "<html><body><h2>Please Work</h2><main><p>functional</p></main></html></body>",
 			expected:  "Please Work",
 		},
+		{
+			name:      "Test no heading",
+			inputHTML: "<html><body><main><p>functional</p></main></html></body>",
+			expected:  "",
+		},
 	}
 
 	for i, tc := range tests {
@@ -35,6 +40,11 @@ func TestGetFirstParagraph(t *testing.T) {
 			name:      "Test get first paragraph",
 			inputHTML: "<html><body><h2>Please Work</h2><main><p>functional</p></main></html></body>",
 			expected:  "functional",
+		},
+		{
+			name:      "Test no paragraph",
+			inputHTML: "<html><body><h2>Please Work</h2><main></main></html></body>",
+			expected:  "",
 		},
 	}
 	for i, tc := range tests {

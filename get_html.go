@@ -36,7 +36,7 @@ func getFirstParagraphFromHTML(html string) string {
 		log.Fatalf("failed to prepare for goquery search: %v", err)
 	}
 
-	selection := doc.Find("<p>").First()
+	selection := doc.Find("p").First()
 	paragraph := selection.Text()
 	return paragraph
 }
