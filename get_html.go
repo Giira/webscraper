@@ -41,5 +41,13 @@ func getFirstParagraphFromHTML(html string) string {
 }
 
 func getURLsFromHTML(htmlBody string, baseURL *url.URL) ([]string, error) {
+	reader := strings.NewReader(htmlBody)
+	doc, err := goquery.NewDocumentFromReader(reader)
+	if err != nil {
+		log.Fatalf("failed to prepare for goquery search: %v", err)
+	}
 
+	selection := doc.Find("a[href]").Each(func(_ int, s *goquery.Selection) {
+
+	})
 }
