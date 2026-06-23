@@ -46,9 +46,21 @@ func getURLsFromHTML(htmlBody string, baseURL *url.URL) ([]string, error) {
 	if err != nil {
 		log.Fatalf("failed to prepare for goquery search: %v", err)
 	}
+
 	var out []string
-	_ = doc.Find("a[href]").Each(func(_ int, s *goquery.Selection) {
-		out = append(out, s.Text())
+	doc.Find("a[href]").Each(func(_ int, s *goquery.Selection) {
+		urlString, ok := s.Attr("href")
+		if !ok {
+			return
+		}
+
+		url, err := url.Parse(urlString)
+		if err != nil {
+			log.Fatalf("error parsing url: %v", err)
+		}
+
+		absolute := baseURL.ResolveReference(url)
+		out = append(out, absolute.String())
 	})
 	return out, nil
 }
