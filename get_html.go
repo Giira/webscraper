@@ -66,5 +66,14 @@ func getURLsFromHTML(htmlBody string, baseURL *url.URL) ([]string, error) {
 }
 
 func getImagesFromHTML(htmlBody string, baseURL *url.URL) ([]string, error) {
+	reader := strings.NewReader(htmlBody)
+	doc, err := goquery.NewDocumentFromReader(reader)
+	if err != nil {
+		log.Fatalf("failed to prepare for goquery search: %v", err)
+	}
 
+	var out []string
+	selection := doc.Find("img").Each(func(_ int, s *goquery.Selection) {
+
+	})
 }
