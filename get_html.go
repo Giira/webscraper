@@ -73,7 +73,19 @@ func getImagesFromHTML(htmlBody string, baseURL *url.URL) ([]string, error) {
 	}
 
 	var out []string
-	selection := doc.Find("img").Each(func(_ int, s *goquery.Selection) {
+	doc.Find("img").Each(func(_ int, s *goquery.Selection) {
+		imgString, ok := s.Attr("img")
+		if !ok {
+			return
+		}
 
+		img, err := url.Parse(imgString)
+		if err != nil {
+			log.Fatalf("error parsing url: %v", err)
+		}
+
+		absolute := baseURL.ResolveReference(img)
+		out = append(out, absolute.String())
 	})
+	return out, nil
 }
