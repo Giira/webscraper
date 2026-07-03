@@ -74,7 +74,7 @@ func getImagesFromHTML(htmlBody string, baseURL *url.URL) ([]string, error) {
 
 	var out []string
 	doc.Find("img").Each(func(_ int, s *goquery.Selection) {
-		imgString, ok := s.Attr("img")
+		imgString, ok := s.Attr("src")
 		if !ok {
 			return
 		}

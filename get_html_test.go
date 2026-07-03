@@ -76,7 +76,23 @@ func TestGetFirstParagraph(t *testing.T) {
 	}
 }
 
-func TestGetURLsFromHTMLAbsolute(t *testing.T) {
+func TestGetURLsFromHTML(t *testing.T) {
+	cases := []struct {
+		name      string
+		inputURL  string
+		inputBody string
+		expected  []string
+	}{}
+
+	for i, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			baseURL, err := url.Parse(tc.inputURL)
+			if err != nil {
+				t.Errorf("Test %v - %s FAIL: expected url: %v, actual: %v", i, tc.name, tc.expected, actual)
+			}
+		})
+	}
+
 	inputURL := "https://crawler-test.com"
 	inputBody := `<html><body><a href="https://crawler-test.com"><span>Boot.dev</span></a></body></html>`
 
