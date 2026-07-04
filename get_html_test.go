@@ -3,6 +3,7 @@ package main
 import (
 	"net/url"
 	"reflect"
+	"slices"
 	"testing"
 )
 
@@ -88,8 +89,17 @@ func TestGetURLsFromHTML(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			baseURL, err := url.Parse(tc.inputURL)
 			if err != nil {
-				t.Errorf("Test %v - %s FAIL: expected url: %v, actual: %v", i, tc.name, tc.expected, actual)
+				t.Errorf("Test %v - %s FAIL: url parsing error: %v", i, tc.name, err)
+				return
 			}
+
+			actual, err := getURLsFromHTML(tc.inputBody, baseURL)
+
+			if !slices.Equal(actual, tc.expected) {
+				t.Errorf("Test %v - %s FAIL: expected url: %v, actual %v", i, tc.name, tc.expected, actual)
+				return
+			}
+
 		})
 	}
 
