@@ -83,7 +83,14 @@ func TestGetURLsFromHTML(t *testing.T) {
 		inputURL  string
 		inputBody string
 		expected  []string
-	}{}
+	}{
+		{
+			name:      "Get correct link",
+			inputURL:  "https://crawler-test.com",
+			inputBody: `<html><body><a href="https://crawler-test.com"><span>Boot.dev</span></a></body></html>`,
+			expected:  []string{"https://crawler-test.com"},
+		},
+	}
 
 	for i, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
