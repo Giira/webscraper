@@ -90,6 +90,12 @@ func TestGetURLsFromHTML(t *testing.T) {
 			inputBody: `<html><body><a href="https://crawler-test.com"><span>Boot.dev</span></a></body></html>`,
 			expected:  []string{"https://crawler-test.com"},
 		},
+		{
+			name:      "Ignore other links when no href",
+			inputURL:  "https://crawler-test.com",
+			inputBody: `<html><body><a><span>Boot.dev</span></a></body></html>`,
+			expected:  nil,
+		},
 	}
 
 	for i, tc := range cases {
