@@ -99,5 +99,28 @@ func getImagesFromHTML(htmlBody string, baseURL *url.URL) ([]string, error) {
 }
 
 func extractPageData(html, pageURL string) PageData {
+	page, err := url.Parse(pageURL)
+	if err != nil {
+		log.Fatalf("error: failed to parse url: %v", err)
+	}
 
+	links, err := getURLsFromHTML(html, page)
+	if err != nil {
+		log.Fatalf("error: failed to get urls: %v", err)
+	}
+
+	images, err := getImagesFromHTML(html, page)
+	if err != nil {
+		log.Fatalf("error: failed to get images: %v", err)
+	}
+
+	out := PageData{
+		URL:            pageURL,
+		Heading:        getHeadingFromHTML(html),
+		FirstParagraph: getFirstParagraphFromHTML(html),
+		OutgoingLinks:  links,
+		ImageURLs:      images,
+	}
+
+	return out
 }
