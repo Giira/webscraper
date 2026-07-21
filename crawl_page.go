@@ -22,6 +22,7 @@ func crawlPage(rawBaseURL string, rawCurrentURL string, pages map[string]int) {
 		pages[normURL] = 1
 	} else {
 		pages[normURL] = i + 1
+		return
 	}
 
 	fmt.Printf("Crawling %v\n", normURL)
