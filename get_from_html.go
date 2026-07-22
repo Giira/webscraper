@@ -15,6 +15,7 @@ type PageData struct {
 	FirstParagraph string
 	OutgoingLinks  []string
 	ImageURLs      []string
+	Visits         int
 }
 
 func getHeadingFromHTML(html string) string {

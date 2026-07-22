@@ -4,10 +4,19 @@ import (
 	"fmt"
 	"net/url"
 	"strings"
+	"sync"
 )
 
-func crawlPage(rawBaseURL string, rawCurrentURL string, pages map[string]int) {
-	if !strings.HasPrefix(rawCurrentURL, rawBaseURL) {
+type config struct {
+	pages              map[string]PageData
+	baseURL            *url.URL
+	mu                 *sync.Mutex
+	concurrencyControl chan struct{}
+	wg                 *sync.WaitGroup
+}
+
+func (cfg *config) crawlPage(rawCurrentURL string) {
+	if !strings.HasPrefix(rawCurrentURL, cfg.baseURL.String()) {
 		return
 	}
 
@@ -17,11 +26,7 @@ func crawlPage(rawBaseURL string, rawCurrentURL string, pages map[string]int) {
 		return
 	}
 
-	i, ok := pages[normURL]
-	if !ok {
-		pages[normURL] = 1
-	} else {
-		pages[normURL] = i + 1
+	if !cfg.addPageVisit(normURL) {
 		return
 	}
 
@@ -32,13 +37,24 @@ func crawlPage(rawBaseURL string, rawCurrentURL string, pages map[string]int) {
 		return
 	}
 
-	baseURL, err := url.Parse(rawBaseURL)
-	if err != nil {
-		fmt.Printf("failed to parse url: %v\n", err)
-		return
+	pd := extractPageData(body, normURL)
+	pd.Visits = 1
+	cfg.mu.Lock()
+	cfg.pages[normURL] = pd
+	cfg.mu.Unlock()
+	for _, url := range pd.OutgoingLinks {
+		go cfg.crawlPage(url)
 	}
-	urls, err := getURLsFromHTML(body, baseURL)
-	for _, url := range urls {
-		crawlPage(rawBaseURL, url, pages)
+}
+
+func (cfg *config) addPageVisit(normalisedURL string) (isFirst bool) {
+	cfg.mu.Lock()
+	pd, ok := cfg.pages[normalisedURL]
+	if !ok {
+		return true
 	}
+	pd.Visits++
+	cfg.pages[normalisedURL] = pd
+	cfg.mu.Unlock()
+	return false
 }
