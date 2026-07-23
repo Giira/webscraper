@@ -18,7 +18,7 @@ func main() {
 	} else {
 		fmt.Printf("starting crawl of: %v\n", args[0])
 		pages := make(map[string]int)
-		crawlPage(args[0], args[0], pages)
+		crawlPage(args[0])
 		fmt.Print("Pages crawled:\nPage: Visits\n")
 		for key, value := range pages {
 			fmt.Printf("%v: %v\n", key, value)
