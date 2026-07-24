@@ -17,6 +17,12 @@ type config struct {
 
 func (cfg *config) crawlPage(rawCurrentURL string) {
 	cfg.wg.Add(1)
+	cfg.concurrencyControl <- struct{}{}
+	defer func() {
+		<-cfg.concurrencyControl
+		cfg.wg.Done()
+	}()
+
 	if !strings.HasPrefix(rawCurrentURL, cfg.baseURL.String()) {
 		return
 	}
