@@ -16,7 +16,6 @@ type config struct {
 }
 
 func (cfg *config) crawlPage(rawCurrentURL string) {
-	cfg.wg.Add(1)
 	cfg.concurrencyControl <- struct{}{}
 	defer func() {
 		<-cfg.concurrencyControl
@@ -47,21 +46,24 @@ func (cfg *config) crawlPage(rawCurrentURL string) {
 	pd := extractPageData(body, normURL)
 	pd.Visits = 1
 	cfg.mu.Lock()
+	fmt.Println("Locked")
 	cfg.pages[normURL] = pd
 	cfg.mu.Unlock()
+	fmt.Println("unlocked")
 	for _, url := range pd.OutgoingLinks {
+		cfg.wg.Add(1)
 		go cfg.crawlPage(url)
 	}
 }
 
 func (cfg *config) addPageVisit(normalisedURL string) (isFirst bool) {
 	cfg.mu.Lock()
+	defer cfg.mu.Unlock()
 	pd, ok := cfg.pages[normalisedURL]
 	if !ok {
 		return true
 	}
 	pd.Visits++
 	cfg.pages[normalisedURL] = pd
-	cfg.mu.Unlock()
 	return false
 }

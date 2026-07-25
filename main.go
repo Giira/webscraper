@@ -36,12 +36,13 @@ func main() {
 			wg:                 &sync.WaitGroup{},
 		}
 
+		cfg.wg.Add(1)
 		cfg.crawlPage(args[0])
 		cfg.wg.Wait()
 
 		fmt.Print("Pages crawled:\nPage: Visits\n")
-		for key, value := range cfg.pages {
-			fmt.Printf("%v: %v\n", key, value)
+		for key, pd := range cfg.pages {
+			fmt.Printf("%v: %v\n", key, pd.Visits)
 		}
 	}
 }
