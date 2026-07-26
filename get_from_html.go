@@ -69,6 +69,8 @@ func getURLsFromHTML(htmlBody string, baseURL *url.URL) ([]string, error) {
 			return
 		}
 
+		urlString = strings.TrimSpace(urlString)
+
 		url, err := url.Parse(urlString)
 		if err != nil {
 			log.Fatalf("error parsing url: %v", err)

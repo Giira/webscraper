@@ -44,12 +44,11 @@ func (cfg *config) crawlPage(rawCurrentURL string) {
 	}
 
 	pd := extractPageData(body, normURL)
+	fmt.Print(pd.OutgoingLinks)
 	pd.Visits = 1
 	cfg.mu.Lock()
-	fmt.Println("Locked")
 	cfg.pages[normURL] = pd
 	cfg.mu.Unlock()
-	fmt.Println("unlocked")
 	for _, url := range pd.OutgoingLinks {
 		cfg.wg.Add(1)
 		go cfg.crawlPage(url)
