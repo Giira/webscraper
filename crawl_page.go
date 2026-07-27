@@ -13,6 +13,7 @@ type config struct {
 	mu                 *sync.Mutex
 	concurrencyControl chan struct{}
 	wg                 *sync.WaitGroup
+	maxPages           int
 }
 
 func (cfg *config) crawlPage(rawCurrentURL string) {
@@ -21,6 +22,13 @@ func (cfg *config) crawlPage(rawCurrentURL string) {
 		<-cfg.concurrencyControl
 		cfg.wg.Done()
 	}()
+
+	cfg.mu.Lock()
+	if len(cfg.pages) >= cfg.maxPages {
+		cfg.mu.Unlock()
+		return
+	}
+	cfg.mu.Unlock()
 
 	if !strings.HasPrefix(rawCurrentURL, cfg.baseURL.String()) {
 		return
@@ -43,8 +51,7 @@ func (cfg *config) crawlPage(rawCurrentURL string) {
 		return
 	}
 
-	pd := extractPageData(body, normURL)
-	fmt.Print(pd.OutgoingLinks)
+	pd := extractPageData(body, rawCurrentURL)
 	pd.Visits = 1
 	cfg.mu.Lock()
 	cfg.pages[normURL] = pd

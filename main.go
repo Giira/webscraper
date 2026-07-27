@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/url"
 	"os"
+	"strconv"
 	"sync"
 )
 
@@ -12,11 +13,12 @@ func main() {
 	args := argswithP[1:]
 
 	maxConcurrency := 5
+	maxPages := 1
 
 	if len(args) < 1 {
 		fmt.Println("no website provided")
 		os.Exit(1)
-	} else if len(args) > 1 {
+	} else if len(args) > 3 {
 		fmt.Println("too many arguments provided")
 		os.Exit(1)
 	} else {
@@ -28,12 +30,28 @@ func main() {
 			os.Exit(1)
 		}
 
+		if len(args) >= 2 {
+			maxConcurrency, err = strconv.Atoi(args[1])
+			if err != nil {
+				fmt.Printf("error converting maxConcurrency value to int: %v", err)
+				os.Exit(1)
+			}
+		}
+		if len(args) >= 3 {
+			maxPages, err = strconv.Atoi(args[2])
+			if err != nil {
+				fmt.Printf("error converting maxPages value to int: %v", err)
+				os.Exit(1)
+			}
+		}
+
 		cfg := &config{
 			pages:              make(map[string]PageData),
 			baseURL:            URL,
 			mu:                 &sync.Mutex{},
 			concurrencyControl: make(chan struct{}, maxConcurrency),
 			wg:                 &sync.WaitGroup{},
+			maxPages:           maxPages,
 		}
 
 		cfg.wg.Add(1)
