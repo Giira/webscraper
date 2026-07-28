@@ -58,9 +58,10 @@ func main() {
 		cfg.crawlPage(args[0])
 		cfg.wg.Wait()
 
-		fmt.Print("Pages crawled:\nPage: Visits\n")
-		for key, pd := range cfg.pages {
-			fmt.Printf("%v: %v\n", key, pd.Visits)
+		err = writeJSONReport(cfg.pages, "report.json")
+		if err != nil {
+			fmt.Printf("error encountered writing json report: %v", err)
+			os.Exit(1)
 		}
 	}
 }
